@@ -6,23 +6,16 @@ def creation_matrice(file_name):
             values = line.strip().split()
             # Conversion des valeurs en entiers
             values = [int(val) for val in values]
-            # Extraction de la première et deuxième valeur
-            premiere_valeur = values[0]
-            deuxieme_valeur = values[1]
-            # Extraction des valeurs suivantes
-            suivantes_valeurs = values[2:]
-            # Ajout des valeurs dans le tableau
-            tableau.append([premiere_valeur, deuxieme_valeur, suivantes_valeurs])
+            # Extraction des valeurs :
+            tableau.append(values)
 
-    # Calcul des successeurs d'alpha donc trouver les premiere_valeur de ceux qui n'ont pas de suivantes_valeurs
-    successeurs_a = []
+# Calcul des successeurs d'alpha donc trouver les premiere_valeur de ceux qui n'ont pas de suivantes_valeurs
     for ligne in tableau:
-        if len(ligne[2]) == 0:  # Vérifier si la liste de successeurs est vide
-            ligne[2] = 0
-            successeurs_a.append(ligne[0])
+        if len(ligne) == 2:  # Vérifier si la liste de successeurs est vide
+            ligne.append(0)
 
     # Ajouter la ligne alpha avant la première ligne du tableau
-    tableau.insert(0, [0, 0, successeurs_a])
+    tableau.insert(0, [0, 0])
 
     # Calcul des prédécesseurs d'oméga
     # donc trouver les premiere_valeur qui n'apparaissent jamais dans les suivantes_valeurs
@@ -31,22 +24,19 @@ def creation_matrice(file_name):
     suivantes_valeurs_set = set()
 
     # Remplir la liste de toutes les premiere_valeur
-    for i in range(len(tableau)):
-        premiere_valeur_set.add(i)
+    for j in range(len(tableau)):
+        premiere_valeur_set.add(j)
     # Remplir la liste de toutes les suivantes_valeurs
     for ligne in tableau:
-        if type(ligne[2]) is list:  # Vérifie s'il y a des suivantes_valeurs dans la ligne
-            suivantes_valeurs_set.update(ligne[2])  # Ajoute les suivantes_valeurs à l'ensemble
-            # (cas où ligne[2] est une liste)
-        else:
-            suivantes_valeurs_set.add(ligne[2])  # Ajoute la suivantes_valeurs à l'ensemble
-            # (cas où ligne[2] est un int)
+        for valeur in ligne[2:]:
+            suivantes_valeurs_set.add(valeur)
 
     # Retirer les premiere_valeur qui apparaissent dans les suivantes_valeurs
     predecesseurs_o = premiere_valeur_set - suivantes_valeurs_set
-    predecesseurs_o = list(predecesseurs_o)
 
     # Ajouter la ligne omega après la dernière ligne du tableau
-    tableau.append([len(tableau), 0, predecesseurs_o])
+    tableau.append([len(tableau), 0])
+    for k in predecesseurs_o:
+        tableau[len(tableau)-1].append(k)
 
     return tableau
